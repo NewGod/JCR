@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    android:id="@+id/roomdialog">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/RoomDialog"
+        android:textSize="24sp" />
+
+    <RadioGroup
+        android:id="@+id/roomGroup"
+        android:layout_width="match_parent"
+        android:layout_height="355dp"
+        android:layout_weight="0.21"
+        android:weightSum="1"
+        android:orientation="vertical">
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/CreateRoom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/CreateRoom" />
+
+    <Button
+        android:id="@+id/EnterRoom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/enterRoom" />
+
+</LinearLayout>
