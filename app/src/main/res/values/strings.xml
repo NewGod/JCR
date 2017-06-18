@@ -1,11 +1,13 @@
 <resources>
     <string name="app_name">JCR</string>
     <string name="action_settings">Settings</string>
-    <string name="inputHint">请输入信息</string>
-    <string name="buttonInfo">发送</string>
-    <string name="enterRoom">进入房间</string>
-    <string name="CreateRoom">创建房间</string>
-    <string name="RoomDialog">请选择房间：</string>
-    <string name="nickname">昵称：</string>
-    <string name="nameInfo">确认</string>
+    <string name="inputHint">please write the message</string>
+    <string name="buttonInfo">Send</string>
+    <string name="enterRoom">enter the room</string>
+    <string name="CreateRoom">create a new room</string>
+    <string name="RoomDialog">please choose a room：</string>
+    <string name="nickname">nick name：</string>
+    <string name="nameInfo">confirm</string>
+    <string name="action_room">leave the room</string>
+    <string name="producer">producer</string>
 </resources>

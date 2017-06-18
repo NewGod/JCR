@@ -32,5 +32,4 @@ public class namedialog extends ActionBarActivity {
     @Override
     public void onBackPressed(){
     }
-
 }

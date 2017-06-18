@@ -1,26 +1,33 @@
 package com.floz.jcr;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.view.View;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class MainActivity extends AppCompatActivity {
-    Button btn;
-    EditText input,output;
+    private Button sendButton = null;
+    private EditText contentEditText = null;
+    private ListView chatListView = null;
+    private List<ChatEntity> chatList = null;
+    private ChatAdapter chatAdapter = null;
     Handler handler=new Handler();
-    String name,room="make love";
+    String name="floz",room="make love";
     boolean mIsActivityDone=true;
+    output out;
     void insert(final String name,final String info,final String room) {
         new Thread(
                 new Runnable() {
@@ -34,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     void setname(){
         mIsActivityDone = false;
         startActivityForResult(new Intent("com.floz.namedialog"),1);
-        while (mIsActivityDone == false)
+        while (!mIsActivityDone)
         {
             try{
                 Thread.sleep(250);
@@ -46,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     void setroom(){
         mIsActivityDone = false;
         startActivityForResult(new Intent("com.floz.roomdialog"),2);
-        while (mIsActivityDone == false)
+        while (!mIsActivityDone)
         {
             try{
                 Thread.sleep(250);
@@ -55,47 +62,103 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    Toolbar toolbar;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        contentEditText = (EditText) this.findViewById(R.id.et_content);
+        sendButton = (Button) this.findViewById(R.id.btn_send);
+        chatListView = (ListView) this.findViewById(R.id.listview);
 
-        btn = (Button) findViewById(R.id.Send);
-        input = (EditText) findViewById(R.id.input);
-        btn.setOnClickListener(new View.OnClickListener() {
+        chatList = new ArrayList<>();
+        chatAdapter = new ChatAdapter(this,chatList);
+        chatListView.setAdapter(chatAdapter);
+
+        sendButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View view) {
-                if (TextUtils.isEmpty(input.getText())) {
-                    Toast.makeText(MainActivity.this,"您输入的内容不能为空",Toast.LENGTH_SHORT).show();
-                    return;
-                }else{
-                    insert(name, input.getText().toString(),room);
-                    input.setText("");
+            public void onClick(View v) {
+                if (!contentEditText.getText().toString().equals("")) {
+                    //发送消息
+                    insert(name,contentEditText.getText().toString(),room);
+                    contentEditText.setText("");
+                }else {
+                    Toast.makeText(MainActivity.this, "Content is empty", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        output=(EditText) findViewById(R.id.output);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 setroom();
                 setname();
                 insert("root", name + "进入了房间", room);
-                Thread tmp_out = new Thread(new output(output, handler, room));
-                tmp_out.start();
+                out=new output(chatAdapter,chatList,handler,room,name);
+                out.start();
             }
         }).start();
+
+
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (resultCode) {
+            case 1:         // 子窗口ChildActivity的回传数据
+                if (data != null) {
+                    Bundle bundle = data.getExtras();
+                    if (bundle != null) {
+                        //处理代码在此地
+                        name = bundle.getString("result");// 得到子窗口ChildActivity的回传数据
+                    }
+                }
+                mIsActivityDone = true;
+                break;
+            case 2:
+                if (data != null) {
+                    Bundle bundle = data.getExtras();
+                    if (bundle != null) {
+                        room = bundle.getString("result");
+                    }
+                }
+                mIsActivityDone = true;
+                break;
+            default:
+                //其它窗口的回传数据
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+    private boolean mIsExit;
+    /**
+     * 双击返回键退出
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mIsExit) {
+                this.finish();
+
+            } else {
+                Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
+                mIsExit = true;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mIsExit = false;
+                    }
+                }, 2000);
+            }
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -109,43 +172,38 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId())
+        {
+            case R.id.action_room:
+                out._stop();
+                chatList.clear();
+                chatAdapter.notifyDataSetChanged();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setroom();
+                        setname();
+                        try {
+                            out.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        insert("root", name + "进入了房间", room);
+                        out=new output(chatAdapter,chatList,handler,room,name);
+                        out.start();
+                    }
+                }).start();
+                break;
+            case R.id.action_setting:
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this , SettingActivity.class);
+                startActivity(intent);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        switch (resultCode) {
-            case 1:         // 子窗口ChildActivity的回传数据
-                if (data != null) {
-                    Bundle bundle = data.getExtras();
-                    if (bundle != null) {
-                        //处理代码在此地
-                        name = bundle.getString("result");// 得到子窗口ChildActivity的回传数据
-                    }
-                }
-                mIsActivityDone=true;
-                break;
-            case 2:
-                if (data != null){
-                    Bundle bundle = data.getExtras();
-                    if (bundle!=null) {
-                        room=bundle.getString("result");
-                    }
-                }
-                mIsActivityDone=true;
-                break;
-            default:
-                //其它窗口的回传数据
-                break;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+
 }

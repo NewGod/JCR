@@ -1,5 +1,4 @@
 package com.floz.jcr;
-import android.util.Log;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ class db_chat {
         }
     }
 
-    static String[] chat_info(String room_name) throws SQLException{
+    static List<ChatEntity> chat_info(String room_name) throws SQLException{
         synchronized (db_chat.class) {
             Connection conn = getConn();
             String sql = "select * from chat_info WHERE room_info = '" + room_name + "' ORDER BY time DESC";
@@ -64,9 +63,16 @@ class db_chat {
             try {
                 pstmt = (PreparedStatement) conn.prepareStatement(sql);
                 ResultSet rs = pstmt.executeQuery();
-                String[] ans = new String[10];
-                for (int cnt = 0; cnt < 10 && rs.next(); cnt++)
-                    ans[cnt] = rs.getString(1) + ' ' + rs.getString(2) + ' ' + rs.getString(3);
+                List<ChatEntity> ans = new ArrayList<ChatEntity>();
+
+                for (int cnt = 0; cnt < 10 && rs.next(); cnt++){
+                    ChatEntity info=new ChatEntity();
+                    info.setContent(rs.getString(3));
+                    info.setChatTime(rs.getString(2));
+                    info.setUser(rs.getString(1));
+                    ans.add(info);
+                }
+            //    Collections.reverse(ans);
                 pstmt.close();
                 conn.close();
                 return ans;
@@ -83,7 +89,6 @@ class db_chat {
             String sql = "insert into chat_info (user_name,info,room_info) values(?,?,?)";
             PreparedStatement pstmt;
             if (conn==null) {
-                Log.e("db_chat","NullPointerException");
                 return 0;
             }
             try {

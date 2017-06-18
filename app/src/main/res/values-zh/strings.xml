@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">聊天室</string>
+    <string name="CreateRoom">创建房间</string>
+    <string name="RoomDialog">请选择房间：</string>
+    <string name="action_settings">设置</string>
+    <string name="buttonInfo">发送</string>
+    <string name="enterRoom">进入房间</string>
+    <string name="inputHint">请输入信息</string>
+    <string name="nameInfo">确认</string>
+    <string name="nickname">昵称：</string>
+    <string name="action_room">离开房间</string>
+    <string name="producer">制作人</string>
+</resources>

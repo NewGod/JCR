@@ -2,8 +2,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.floz.jcr.MainActivity" >
-    <item android:id="@+id/action_settings"
+
+
+    <item
+        android:id="@+id/action_room"
+        android:title="@string/action_room"
+        android:orderInCategory="98"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_setting"
         android:title="@string/action_settings"
         android:orderInCategory="100"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
 </menu>
