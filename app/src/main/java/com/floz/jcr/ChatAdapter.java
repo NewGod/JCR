@@ -11,7 +11,7 @@ import android.widget.TextView;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class ChatAdapter extends BaseAdapter {
+public class ChatAdapter extends BaseAdapter {//聊天信息的Adapter
     private Context context = null;
     private List<ChatEntity> chatList = null;
     private LayoutInflater inflater = null;
@@ -71,7 +71,7 @@ public class ChatAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ChatHolder chatHolder ;
-        if (convertView == null) {
+        if (convertView == null) {//第一次加载
             chatHolder = new ChatHolder();
             if (chatList.get(position).isComeMsg()) {
                 convertView = inflater.inflate(R.layout.chat_from_item, null);
@@ -90,7 +90,7 @@ public class ChatAdapter extends BaseAdapter {
         chatHolder.timeTextView.setText(chatList.get(position).getChatTime());
         chatHolder.contentTextView.setText(chatList.get(position).getContent());
         chatHolder.userTextView.setText(chatList.get(position).getUser());
-        if (!chatList.get(position).getUser().equals("root"))
+        if (!chatList.get(position).getUser().equals("root")) //根据名称hash值获得相应头像
             chatHolder.userImageView.setImageResource(getResource((chatList.get(position).getUser().hashCode()%21+21)%21));
         return convertView;
     }

@@ -6,7 +6,7 @@ import java.util.List;
 
 import static java.lang.Math.min;
 
-public class output extends Thread {
+public class output extends Thread {//监控并进行更新聊天信息
 	Handler handler;
 	ChatAdapter chatAdapter;
 	private List<ChatEntity> chatList;
@@ -15,12 +15,13 @@ public class output extends Thread {
 	volatile Thread blinker;
 	public void _stop(){
         blinker=null;
-    }
+    }//控制其停止
 	output(ChatAdapter adapter,List<ChatEntity> list,Handler tmp,String room,String name){
         chatAdapter=adapter; chatList=list;handler=tmp;this.room=room;
-        this.name=name;
+		this.name=name;
 	}
-	private void add(final ChatEntity tmp) {
+	//ChatAdapter 通过监控 ChatList 是否产生更新来更新聊天信息的显示
+	private void add(final ChatEntity tmp) {//通过handle进行更新
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
@@ -39,10 +40,10 @@ public class output extends Thread {
 		Thread thisThread = Thread.currentThread();
 		blinker = thisThread;
 		List<ChatEntity> lastest_information = null;
+		//获取最近10条信息并输出
 		try {
 			lastest_information = db_chat.chat_info(room);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		for(int cnt=min(lastest_information.size()-1,9);cnt>=0;cnt--) {
@@ -51,11 +52,11 @@ public class output extends Thread {
 			add(tmp);
         }
 		ChatEntity lst = lastest_information.get(0);
+		//监控是否出现新的信息
 		while (blinker==thisThread){
 			try {
 				lastest_information = db_chat.chat_info(room);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			int cnt;

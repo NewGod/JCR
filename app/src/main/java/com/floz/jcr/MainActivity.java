@@ -25,10 +25,10 @@ public class MainActivity extends AppCompatActivity {
     private List<ChatEntity> chatList = null;
     private ChatAdapter chatAdapter = null;
     Handler handler=new Handler();
-    String name="floz",room="make love";
+    String name,room;
     boolean mIsActivityDone=true;
     output out;
-    void insert(final String name,final String info,final String room) {
+    void insert(final String name,final String info,final String room) {//添加聊天信息
         new Thread(
                 new Runnable() {
                     @Override
@@ -38,10 +38,10 @@ public class MainActivity extends AppCompatActivity {
                 }
         ).start();
     }
-    void setname(){
+    void setname(){//得到昵称
         mIsActivityDone = false;
         startActivityForResult(new Intent("com.floz.namedialog"),1);
-        while (!mIsActivityDone)
+        while (!mIsActivityDone) //等待Activity结束
         {
             try{
                 Thread.sleep(250);
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    void setroom(){
+    void setroom(){//得到房间名
         mIsActivityDone = false;
         startActivityForResult(new Intent("com.floz.roomdialog"),2);
         while (!mIsActivityDone)
@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
         chatListView.setAdapter(chatAdapter);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 if (!contentEditText.getText().toString().equals("")) {
@@ -107,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {//获得回传数据
         switch (resultCode) {
             case 1:         // 子窗口ChildActivity的回传数据
                 if (data != null) {
@@ -134,17 +133,15 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
     private boolean mIsExit;
-    /**
-     * 双击返回键退出
-     */
+    //双击返回键退出
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (mIsExit) {
                 this.finish();
-
             } else {
                 Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
                 mIsExit = true;
@@ -157,25 +154,20 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         }
-
         return super.onKeyDown(keyCode, event);
     }
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+    public boolean onCreateOptionsMenu(Menu menu) {//添加菜单
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
         switch (item.getItemId())
         {
-            case R.id.action_room:
+            case R.id.action_room://重新选择房间
                 out._stop();
                 chatList.clear();
                 chatAdapter.notifyDataSetChanged();
@@ -195,13 +187,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }).start();
                 break;
-            case R.id.action_setting:
+            case R.id.action_setting://设置页面
                 Intent intent = new Intent();
                 intent.setClass(MainActivity.this , SettingActivity.class);
                 startActivity(intent);
                 break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class roomdialog extends AppCompatActivity{
+public class roomdialog extends AppCompatActivity{//获取房间名
     RadioGroup roomGroup;
     private class roomThread implements Runnable {
         List<String> name;
@@ -27,26 +27,26 @@ public class roomdialog extends AppCompatActivity{
             db_chat.getRoomName(name);
         }
     }
-    void getRoomName(){
+    void getRoomName(){//查找所有的房间并显示
         roomGroup.removeAllViews();
         int id=0;
         List<String> roomName=new ArrayList<>();
         Thread run=new Thread(new roomThread(roomName));
         run.start();
         try {
-            run.join();
+            run.join();//等待网络进程
         }catch (InterruptedException e){
             e.printStackTrace();
         }
         for (String st:roomName) {
             RadioButton button=new RadioButton(this);
-            setRaidBtnAttribute(button,st,id);
+            setRaidBtnAttribute(button,st,id);//设置RadioButton的属性
             roomGroup.addView(button);
             ++id;
         }
         roomGroup.check(0);
     }
-    private void setRaidBtnAttribute( final RadioButton codeBtn, String btnContent, int id ){
+    private void setRaidBtnAttribute( final RadioButton codeBtn, String btnContent, int id ){//设置RadioButton的属性
         if( null == codeBtn ){
             return;
         }
@@ -69,7 +69,7 @@ public class roomdialog extends AppCompatActivity{
         roomGroup=(RadioGroup) findViewById(R.id.roomGroup);
         getRoomName();
         enter.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
+            public void onClick(View arg0) {//返回信息设置
                 Intent intent = new Intent();
                 RadioButton Btn= (RadioButton)findViewById(roomGroup.getCheckedRadioButtonId());
                 intent.putExtra("result",
@@ -79,13 +79,13 @@ public class roomdialog extends AppCompatActivity{
             }
         });
         create.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
+            public void onClick(View arg0) {//新建房间
                 final EditText editText = new EditText(roomdialog.this);
                 final AlertDialog.Builder inputDialog =
                         new AlertDialog.Builder(roomdialog.this);
                 inputDialog.setTitle("请输入房间名").setView(editText);
                 inputDialog.setPositiveButton("确定",
-                        new DialogInterface.OnClickListener() {
+                        new DialogInterface.OnClickListener() {//直接利用警示框来完成新建房间功能
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (TextUtils.isEmpty(editText.getText())) {
@@ -112,6 +112,6 @@ public class roomdialog extends AppCompatActivity{
         });
     }
     @Override
-    public void onBackPressed(){
+    public void onBackPressed(){//重载退出键使得该Activity无法退出
     }
 }

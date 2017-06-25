@@ -1,6 +1,6 @@
 package com.floz.jcr;
 
-public class ChatEntity {
+public class ChatEntity {//聊天信息内容
 
     private String user;
     private String content;
